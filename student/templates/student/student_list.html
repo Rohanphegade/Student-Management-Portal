@@ -1,0 +1,57 @@
+<h2>Students</h2>
+
+<form method="get">
+  <input type="text" name="q" placeholder="Search by name, email, phone">
+
+  <select name="status">
+    <option value="">All Status</option>
+    <option value="active">Active</option>
+    <option value="completed">Completed</option>
+    <option value="dropped">Dropped</option>
+  </select>
+
+  <input type="text" name="course" placeholder="Course name">
+
+  <button type="submit">Apply</button>
+</form>
+
+<br>
+
+<a href="{% url 'student_add' %}">Add Student</a>
+
+<ul>
+  {% for student in page_obj %}
+  <li>
+    {{ student.full_name }} |
+    {{ student.course_name }} |
+    {{ student.status }} |
+    Paid: {{ student.paid_fees }} |
+    Remaining: {{ student.remaining_fees }}
+    LMS: {{ student.lms_username }} |
+    Certificate: {{ student.certificate_id|default:"Not Issued" }}
+    <br>
+    <a href="{% url 'student_view' student.id %}">View</a> |
+    <a href="{% url 'student_edit' student.id %}">Edit</a> |
+    <a href="{% url 'student_documents' student.id %}">Documents</a>
+    {% if perms.student.delete_student %}
+    | <a href="{% url 'student_delete' student.id %}">Delete</a>
+    {% endif %}
+  </li>
+  {% empty %}
+  <li>No students found</li>
+  {% endfor %}
+</ul>
+
+
+<!-- Pagination -->
+<div>
+  {% if page_obj.has_previous %}
+  <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+  {% endif %}
+
+  Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+
+  {% if page_obj.has_next %}
+  <a href="?page={{ page_obj.next_page_number }}">Next</a>
+  {% endif %}
+</div>

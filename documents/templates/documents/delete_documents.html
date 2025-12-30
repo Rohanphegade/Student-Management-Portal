@@ -1,0 +1,12 @@
+<h3>Are you sure you want to delete this document?</h3>
+
+<p>
+  {{ document.get_document_type_display }} for
+  {{ document.student.full_name }}
+</p>
+
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">Yes, Delete</button>
+  <a href="{% url 'student_documents' document.student.id %}">Cancel</a>
+</form>

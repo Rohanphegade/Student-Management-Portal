@@ -1,0 +1,13 @@
+<h2>Leads (Enquiries)</h2>
+
+<a href="{% url 'lead_add' %}">Add New Lead</a>
+
+<ul>
+  {% for lead in leads %}
+    <li>
+      {{ lead.full_name }} - {{ lead.interested_course }} ({{ lead.status }})
+      <a href="{% url 'lead_convert' lead.id %}">Convert</a>
+      <a href="{% url 'lead_delete' lead.id %}">Remove</a>
+    </li>
+  {% endfor %}
+</ul>

@@ -1,0 +1,17 @@
+<h2>Documents for {{ student.full_name }}</h2>
+
+<a href="{% url 'upload_document' student.id %}">Upload New Document</a>
+
+<ul>
+  {% for doc in documents %}
+    <li>
+  {{ doc.get_document_type_display }} —
+  <a href="{{ doc.file.url }}" target="_blank">View / Download</a>
+
+  <form action="{% url 'delete_document' doc.id %}" method="post" style="display:inline;">
+    {% csrf_token %}
+    <button type="submit">Delete</button>
+  </form>
+</li>
+  {% endfor %}
+</ul>

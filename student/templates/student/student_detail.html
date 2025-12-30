@@ -1,0 +1,15 @@
+<h2>Student Details</h2>
+
+<p><strong>Name:</strong> {{ student.full_name }}</p>
+<p><strong>Email:</strong> {{ student.email }}</p>
+<p><strong>Phone:</strong> {{ student.phone }}</p>
+<p><strong>Course:</strong> {{ student.course_name }}</p>
+<p><strong>LMS Username:</strong> {{ student.lms_username }}</p>
+<p><strong>Certificate ID:</strong> {{ student.certificate_id|default:"Not Issued" }}</p>
+<p><strong>Status:</strong> {{ student.status }}</p>
+<p><strong>Total Fees:</strong> {{ student.total_fees }}</p>
+<p><strong>Paid Fees:</strong> {{ student.paid_fees }}</p>
+<p><strong>Remaining Fees:</strong> {{ student.remaining_fees }}</p>
+
+<a href="{% url 'student_edit' student.id %}">Edit</a> |
+<a href="{% url 'student_documents' student.id %}">Documents</a>

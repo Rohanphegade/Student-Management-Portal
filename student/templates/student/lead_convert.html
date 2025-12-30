@@ -1,0 +1,13 @@
+<h2>Convert Lead to Student</h2>
+
+<p>
+  Converting lead:
+  <strong>{{ lead.full_name }}</strong>
+  ({{ lead.interested_course }})
+</p>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Convert to Student</button>
+</form>
