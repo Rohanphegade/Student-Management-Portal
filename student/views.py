@@ -4,9 +4,13 @@ from .forms import StudentForm, LeadForm
 from .models import Lead
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.contrib.auth.decorators import permission_required
+# from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import login_required, user_passes_test
+from accounts.utils import is_admin_or_manager
 
 
+@login_required
+@user_passes_test(is_admin_or_manager)
 def student_list(request):
     students = Student.objects.all()
 
@@ -38,6 +42,8 @@ def student_list(request):
     })
 
 
+@login_required
+@user_passes_test(is_admin_or_manager)
 def student_create(request):
     if request.method == 'POST':
         form = StudentForm(request.POST)
@@ -50,6 +56,8 @@ def student_create(request):
     return render(request, 'student/student_form.html', {'form': form})
 
 
+@login_required
+@user_passes_test(is_admin_or_manager)
 def student_update(request, pk):
     student = get_object_or_404(Student, pk=pk)
 
@@ -64,13 +72,18 @@ def student_update(request, pk):
     return render(request, 'student/student_form.html', {'form': form})
 
 
+@login_required
+@user_passes_test(is_admin_or_manager)
 def student_detail(request, student_id):
     student = get_object_or_404(Student, id=student_id)
     return render(request, 'student/student_detail.html', {
         'student': student
     })
 
-@permission_required('student.delete_student', raise_exception=True)
+
+@login_required
+@user_passes_test(is_admin_or_manager)
+# @permission_required('student.delete_student', raise_exception=True)
 def student_delete(request, student_id):
     student = get_object_or_404(Student, id=student_id)
 
@@ -82,11 +95,16 @@ def student_delete(request, student_id):
         'student': student
     })
 
+
+@login_required
+@user_passes_test(is_admin_or_manager)
 def lead_list(request):
     leads = Lead.objects.all()
     return render(request, 'student/lead_list.html', {'leads': leads})
 
 
+@login_required
+@user_passes_test(is_admin_or_manager)
 def lead_create(request):
     if request.method == 'POST':
         form = LeadForm(request.POST)
@@ -99,12 +117,16 @@ def lead_create(request):
     return render(request, 'student/lead_form.html', {'form': form})
 
 
+@login_required
+@user_passes_test(is_admin_or_manager)
 def lead_delete(request, pk):
     lead = get_object_or_404(Lead, pk=pk)
     lead.delete()
     return redirect('lead_list')
 
 
+@login_required
+@user_passes_test(is_admin_or_manager)
 def lead_convert_to_student(request, pk):
     lead = get_object_or_404(Lead, pk=pk)
 

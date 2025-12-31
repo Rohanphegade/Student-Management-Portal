@@ -2,8 +2,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Document
 from .forms import DocumentForm
 from student.models import Student
+from django.contrib.auth.decorators import login_required, user_passes_test
+from accounts.utils import is_admin_or_manager
 
 
+@login_required
+@user_passes_test(is_admin_or_manager)
 def student_documents(request, student_id):
     student = get_object_or_404(Student, id=student_id)
     documents = student.documents.all()
@@ -14,6 +18,8 @@ def student_documents(request, student_id):
     })
 
 
+@login_required
+@user_passes_test(is_admin_or_manager)
 def upload_document(request, student_id):
     student = get_object_or_404(Student, id=student_id)
 
@@ -32,6 +38,9 @@ def upload_document(request, student_id):
         'student': student
     })
 
+
+@login_required
+@user_passes_test(is_admin_or_manager)
 def delete_document(request, doc_id):
     document = get_object_or_404(Document, id=doc_id)
     student_id = document.student.id
