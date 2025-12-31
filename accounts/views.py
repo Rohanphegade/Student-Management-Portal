@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 
 
+
 # Create your views here.
 def login_view(request):
     if request.method == 'POST':
@@ -23,10 +24,11 @@ def login_view(request):
         else:
             messages.error(request, 'Invalid username or password')
 
+
     return render(request, 'accounts/login.html')
 
 
-
+#  logout
 def logout_view(request):
     logout(request)   # session destroyed
     return redirect('login')
