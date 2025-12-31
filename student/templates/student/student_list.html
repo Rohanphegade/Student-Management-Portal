@@ -1,5 +1,11 @@
 <h2>Students</h2>
 
+<div class="d-flex justify-content-end mb-3">
+  <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm">
+    Logout
+  </a>
+</div>
+
 <form method="get">
   <input type="text" name="q" placeholder="Search by name, email, phone">
 
@@ -17,7 +23,7 @@
 
 <br>
 
-<a href="{% url 'student_add' %}">Add Student</a>
+<a href="{% url 'student_add' %}" class="btn btn-sm btn-primary">Add Student</a>
 
 <ul>
   {% for student in page_obj %}
@@ -30,12 +36,10 @@
     LMS: {{ student.lms_username }} |
     Certificate: {{ student.certificate_id|default:"Not Issued" }}
     <br>
-    <a href="{% url 'student_view' student.id %}">View</a> |
-    <a href="{% url 'student_edit' student.id %}">Edit</a> |
-    <a href="{% url 'student_documents' student.id %}">Documents</a>
-    {% if perms.student.delete_student %}
-    | <a href="{% url 'student_delete' student.id %}">Delete</a>
-    {% endif %}
+    <a href="{% url 'student_view' student.id %}" class="btn btn-sm btn-info">View</a>
+    <a href="{% url 'student_edit' student.id %}" class="btn btn-sm btn-warning">Edit</a>
+    <a href="{% url 'student_documents' student.id %}" class="btn btn-sm btn-success">Documents</a>
+    | <a href="{% url 'student_delete' student.id %}" class="btn btn-sm btn-danger">Delete</a>
   </li>
   {% empty %}
   <li>No students found</li>
@@ -46,12 +50,12 @@
 <!-- Pagination -->
 <div>
   {% if page_obj.has_previous %}
-  <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+  <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-sm btn-primary">Previous</a>
   {% endif %}
 
   Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
 
   {% if page_obj.has_next %}
-  <a href="?page={{ page_obj.next_page_number }}">Next</a>
+  <a href="?page={{ page_obj.next_page_number }}" class="btn btn-sm btn-primary">Next</a>
   {% endif %}
 </div>
