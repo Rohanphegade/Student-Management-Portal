@@ -1,0 +1,200 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mb-4 text-dark fw-bold">Dashboard</h1>
+
+    <!-- Stats Cards -->
+    <div class="row mb-5">
+        <!-- Total Students -->
+        <div class="col-md-3 mb-4">
+            <div class="card card-custom bg-white h-100">
+                <div class="card-body text-center">
+                    <div class="metric-value text-primary">{{ total_students }}</div>
+                    <div class="metric-label">Total Students</div>
+                </div>
+            </div>
+        </div>
+        <!-- Total Leads -->
+        <div class="col-md-3 mb-4">
+            <div class="card card-custom bg-white h-100">
+                <div class="card-body text-center">
+                    <div class="metric-value text-warning">{{ total_leads }}</div>
+                    <div class="metric-label">Total Leads</div>
+                </div>
+            </div>
+        </div>
+        <!-- Total Documents -->
+        <div class="col-md-3 mb-4">
+            <div class="card card-custom bg-white h-100">
+                <div class="card-body text-center">
+                    <div class="metric-value text-info">{{ total_documents }}</div>
+                    <div class="metric-label">Total Documents</div>
+                </div>
+            </div>
+        </div>
+        <!-- Total Fees -->
+        <div class="col-md-3 mb-4">
+            <div class="card card-custom bg-white h-100">
+                <div class="card-body text-center">
+                    <div class="metric-value text-success">${{ total_fees|floatformat:0 }}</div>
+                    <div class="metric-label">Total Fees</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fees Summary Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card card-custom bg-white p-4">
+                <h4 class="card-title mb-4">Fees Overview</h4>
+                <div class="row text-center">
+                    <!-- Paid Fees -->
+                    <div class="col-md-6">
+                        <h5 class="text-success">Paid</h5>
+                        <h3>${{ paid_fees|floatformat:2 }}</h3>
+                    </div>
+                    <!-- Pending Fees -->
+                    <div class="col-md-6">
+                        <h5 class="text-danger">Pending</h5>
+                        <h3>${{ pending_fees|floatformat:2 }}</h3>
+                    </div>
+                </div>
+                <div class="progress mt-3" style="height: 25px;">
+                    {% widthratio paid_fees total_fees 100 as paid_pct %}
+                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ paid_pct }}%"
+                        aria-valuenow="{{ paid_fees }}" aria-valuemin="0" aria-valuemax="{{ total_fees }}">
+                        Paid ({{ paid_pct }}%)
+                    </div>
+                    <div class="progress-bar bg-danger" role="progressbar" style="width: 100%"
+                        aria-valuenow="{{ pending_fees }}" aria-valuemin="0" aria-valuemax="{{ total_fees }}">
+                        Pending
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row">
+        <!-- Monthly Admissions Chart -->
+        <div class="col-md-8 mb-4">
+            <div class="card card-custom bg-white h-100 p-3">
+                <h5 class="card-title">Monthly Admissions</h5>
+                <div style="height: 300px; position: relative;">
+                    <canvas id="admissionsChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <!-- Student Status Chart -->
+        <div class="col-md-4 mb-4">
+            <div class="card card-custom bg-white h-100 p-3">
+                <h5 class="card-title">Student Status</h5>
+                <div style="height: 300px; position: relative;">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Data from Django View
+    const admissionLabels = {{ admission_labels| safe }};
+    const admissionData = {{ admission_data| safe }};
+    const statusLabels = {{ status_labels| safe }};
+    const statusData = {{ status_data| safe }};
+
+    // --- Admissions Chart (Gradient Bar) ---
+    const ctxAdmissions = document.getElementById('admissionsChart').getContext('2d');
+
+    // Create Gradient
+    let gradient = ctxAdmissions.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, '#5e35b1'); // Deep Purple
+    gradient.addColorStop(1, '#1e88e5'); // Blue
+
+    new Chart(ctxAdmissions, {
+        type: 'bar',
+        data: {
+            labels: admissionLabels,
+            datasets: [{
+                label: 'Admissions',
+                data: admissionData,
+                backgroundColor: gradient,
+                borderRadius: 5, // Rounded corners at top
+                barPercentage: 0.5, // Thinner bars
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false // Hide legend for cleaner look
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        display: false, // Remove Y-grid
+                        drawBorder: false
+                    },
+                    ticks: { display: false } // Remove Y-labels if desired, or keep them
+                },
+                x: {
+                    grid: {
+                        display: false, // Remove X-grid
+                        drawBorder: false
+                    },
+                    ticks: {
+                        font: { size: 10 },
+                        color: '#888'
+                    }
+                }
+            }
+        }
+    });
+
+    // --- Status Chart (Doughnut) ---
+    const ctxStatus = document.getElementById('statusChart').getContext('2d');
+
+    // Map colors to labels to ensure Active=Green, Completed=Blue regardless of order
+    const statusColors = statusLabels.map(label => {
+        if (label === 'Active') return '#00e676'; // Bright Green
+        if (label === 'Completed') return '#3f51b5'; // Professional Navy/Soft Blue
+        return '#e0e0e0'; // Default Grey
+    });
+
+    new Chart(ctxStatus, {
+        type: 'doughnut',
+        data: {
+            labels: statusLabels,
+            datasets: [{
+                data: statusData,
+                backgroundColor: statusColors,
+                borderWidth: 0,
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '75%', // Thicker ring (empty center)
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 20,
+                        pointStyle: 'circle',
+                        font: { size: 12 }
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
