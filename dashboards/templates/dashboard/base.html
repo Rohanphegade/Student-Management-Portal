@@ -7,6 +7,8 @@
     <title>{% block title %}Dashboard{% endblock %}</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -73,6 +75,68 @@
             letter-spacing: 1px;
         }
 
+        .navbar-top {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 15px 30px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-top h2 {
+            margin: 0;
+            font-size: 1.75rem;
+            color: #333;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .username-display {
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        table {
+            background: white;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #f8f9fa;
+            cursor: pointer;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .action-buttons .btn {
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+
+        .filters-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
         @media (max-width: 768px) {
             .sidebar {
                 width: 100%;
@@ -83,6 +147,10 @@
             .content {
                 margin-left: 0;
             }
+
+            .table-responsive {
+                overflow-x: auto;
+            }
         }
     </style>
 </head>
@@ -91,18 +159,32 @@
 
     <!-- Sidebar -->
     <div class="sidebar d-flex flex-column">
-        <h3 class="text-center mb-4">Student Mgmt</h3>
+        <h3 class="text-center mb-4"><i class="bi bi-mortarboard-fill me-2"></i>Student Mgmt</h3>
         <a href="{% url 'dashboard' %}"
-            class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
-        <!-- Using safe navigation; links will only work if URL names exist -->
-        <a href="{% url 'student_list' %}">Students</a>
-        <a href="{% url 'lead_list' %}">Leads</a>
-        <a href="{% url 'dashboard_documents' %}">Documents</a>
-        <a href="{% url 'dashboard_accounts' %}">Accounts</a>
+            class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+            <i class="bi bi-speedometer2 me-2"></i>Dashboard
+        </a>
+        <a href="{% url 'student_list' %}"
+            class="{% if request.resolver_match.url_name == 'student_list' or 'student' in request.path %}active{% endif %}">
+            <i class="bi bi-people-fill me-2"></i>Students
+        </a>
+        <a href="{% url 'lead_list' %}" class="{% if 'lead' in request.path %}active{% endif %}">
+            <i class="bi bi-person-plus-fill me-2"></i>Leads
+        </a>
+        <a href="{% url 'dashboard_documents' %}" class="{% if 'document' in request.path %}active{% endif %}">
+            <i class="bi bi-folder-fill me-2"></i>Documents
+        </a>
+        <a href="{% url 'dashboard_accounts' %}" class="{% if 'account' in request.path %}active{% endif %}">
+            <i class="bi bi-gear-fill me-2"></i>Accounts
+        </a>
     </div>
 
     <!-- Main Content -->
     <div class="content">
+        {% block navbar %}
+        <!-- Top navbar can be overridden in child templates -->
+        {% endblock %}
+
         {% block content %}
         {% endblock %}
     </div>

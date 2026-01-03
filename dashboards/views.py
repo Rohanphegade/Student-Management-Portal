@@ -3,7 +3,15 @@ from django.db.models import Sum, Count
 from django.db.models.functions import TruncMonth
 from student.models import Student, Lead
 from documents.models import Document
+from django.contrib.auth.decorators import (
+    login_required,
+    user_passes_test,
+    permission_required,
+)
+from accounts.utils import is_admin_or_manager
 
+@login_required
+@user_passes_test(is_admin_or_manager)
 def dashboard_home(request):
     # 1. Counts for Cards
     total_students = Student.objects.count()
@@ -69,13 +77,15 @@ def dashboard_home(request):
 
     return render(request, 'dashboard/home.html', context)
 
-
+@login_required
+@user_passes_test(is_admin_or_manager)
 def document_list(request):
     documents = Document.objects.all().select_related('student')
     context = {'documents': documents}
     return render(request, 'dashboard/documents_list.html', context)
 
-
+@login_required
+@user_passes_test(is_admin_or_manager)
 def account_list(request):
     # Determine fees data per student
     students = Student.objects.all()

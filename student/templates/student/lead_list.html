@@ -1,13 +1,109 @@
-<h2>Leads (Enquiries)</h2>
+{% extends "dashboard/base.html" %}
 
-<a href="{% url 'lead_add' %}">Add New Lead</a>
+{% block title %}Leads - Student Management Portal{% endblock %}
 
-<ul>
-  {% for lead in leads %}
-    <li>
-      {{ lead.full_name }} - {{ lead.interested_course }} ({{ lead.status }})
-      <a href="{% url 'lead_convert' lead.id %}">Convert</a>
-      <a href="{% url 'lead_delete' lead.id %}">Remove</a>
-    </li>
-  {% endfor %}
-</ul>
+{% block navbar %}
+<!-- Top Navbar -->
+<div class="navbar-top">
+  <h2><i class="bi bi-person-plus-fill me-2"></i>Leads (Enquiries)</h2>
+  <div class="user-section">
+    {% if user.is_authenticated %}
+    <span class="username-display">
+      <i class="bi bi-person-circle me-1"></i>{{ user.username }}
+    </span>
+    <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm">
+      <i class="bi bi-box-arrow-right me-1"></i>Logout
+    </a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header with Add Button -->
+<div class="page-header">
+  <div></div>
+  <a href="{% url 'lead_add' %}" class="btn btn-primary">
+    <i class="bi bi-plus-circle me-2"></i>Add New Lead
+  </a>
+</div>
+
+<!-- Django Messages -->
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+  <i
+    class="bi bi-{% if message.tags == 'success' %}check-circle-fill{% elif message.tags == 'error' %}exclamation-triangle-fill{% else %}info-circle-fill{% endif %} me-2"></i>
+  {{ message }}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
+
+<!-- Leads Table -->
+<div class="card card-custom">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Lead Name</th>
+            <th>Course / Interest</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for lead in leads %}
+          <tr>
+            <td>
+              <strong>{{ lead.full_name }}</strong>
+              {% if lead.email %}
+              <br><small class="text-muted"><i class="bi bi-envelope me-1"></i>{{ lead.email }}</small>
+              {% endif %}
+            </td>
+            <td>{{ lead.interested_course }}</td>
+            <td>
+              {% if lead.status == 'new' %}
+              <span class="badge bg-warning text-dark">
+                <i class="bi bi-star me-1"></i>New
+              </span>
+              {% elif lead.status == 'contacted' %}
+              <span class="badge bg-primary">
+                <i class="bi bi-telephone me-1"></i>Contacted
+              </span>
+              {% elif lead.status == 'converted' %}
+              <span class="badge bg-success">
+                <i class="bi bi-check-circle me-1"></i>Converted
+              </span>
+              {% else %}
+              <span class="badge bg-secondary">{{ lead.status }}</span>
+              {% endif %}
+            </td>
+            <td class="action-buttons">
+              <a href="{% url 'lead_convert' lead.id %}" class="btn btn-sm btn-primary" title="Convert to Student">
+                <i class="bi bi-arrow-repeat"></i>
+              </a>
+              <a href="{% url 'lead_delete' lead.id %}" class="btn btn-sm btn-danger" title="Remove Lead">
+                <i class="bi bi-trash-fill"></i>
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4" class="text-center py-4">
+              <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+              <p class="text-muted mt-2">No leads found</p>
+              <a href="{% url 'lead_add' %}" class="btn btn-primary mt-2">
+                <i class="bi bi-plus-circle me-1"></i>Add Your First Lead
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

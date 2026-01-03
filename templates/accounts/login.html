@@ -1,33 +1,181 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Student Management Portal</title>
+    
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .login-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            width: 100%;
+            max-width: 420px;
+        }
+        
+        .login-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .login-header h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .login-header p {
+            font-size: 0.95rem;
+            opacity: 0.95;
+            margin: 0;
+        }
+        
+        .login-body {
+            padding: 40px 30px;
+        }
+        
+        .input-group-text {
+            background-color: #f8f9fa;
+            border-right: none;
+        }
+        
+        .form-control {
+            border-left: none;
+            padding: 12px;
+        }
+        
+        .form-control:focus {
+            box-shadow: none;
+            border-color: #ced4da;
+        }
+        
+        .input-group:focus-within .input-group-text {
+            border-color: #667eea;
+        }
+        
+        .input-group:focus-within .form-control {
+            border-color: #667eea;
+        }
+        
+        .btn-login {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            border-radius: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+        
+        .alert {
+            border-radius: 8px;
+            border: none;
+        }
+        
+        label {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
+        }
+    </style>
 </head>
 <body>
+    <div class="login-card">
+        <div class="login-header">
+            <h1><i class="bi bi-mortarboard-fill me-2"></i>Student Management Portal</h1>
+            <p>Admin / Manager Login</p>
+        </div>
+        
+        <div class="login-body">
+            <!-- Show error messages if any -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-danger d-flex align-items-center mb-4" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <div>{{ message }}</div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            {% if form.errors %}
+                <div class="alert alert-danger d-flex align-items-center mb-4" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <div>Invalid username or password. Please try again.</div>
+                </div>
+            {% endif %}
 
-    <h2>Login</h2>
+            <!-- Login form -->
+            <form method="POST" action="{% url 'login' %}">
+                {% csrf_token %}
 
-    <!-- Show error messages if any -->
-    {% if messages %}
-        {% for message in messages %}
-            <p style="color:red;">{{ message }}</p>
-        {% endfor %}
-    {% endif %}
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-person-fill text-muted"></i>
+                        </span>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="username" 
+                            name="username" 
+                            placeholder="Enter your username"
+                            required
+                            autofocus
+                        >
+                    </div>
+                </div>
 
-    <!-- Login form -->
-    <form method="POST" action="{% url 'login' %}">
-        {% csrf_token %}
+                <div class="mb-4">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-lock-fill text-muted"></i>
+                        </span>
+                        <input 
+                            type="password" 
+                            class="form-control" 
+                            id="password" 
+                            name="password" 
+                            placeholder="Enter your password"
+                            required
+                        >
+                    </div>
+                </div>
 
-        <!-- CSRF token for security (VERY IMPORTANT) -->
-
-        <label>Username:</label><br>
-        <input type="text" name="username"><br><br>
-
-        <label>Password:</label><br>
-        <input type="password" name="password"><br><br>
-
-        <button type="submit">Login</button>
-    </form>
-
+                <button type="submit" class="btn btn-primary btn-login w-100">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Bootstrap 5.3 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

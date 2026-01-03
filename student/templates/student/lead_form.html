@@ -1,7 +1,194 @@
-<h2>Add Lead</h2>
+{% extends "dashboard/base.html" %}
 
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Save Lead</button>
-</form>
+{% block title %}Add Lead - Student Management Portal{% endblock %}
+
+{% block navbar %}
+<!-- Top Navbar -->
+<div class="navbar-top">
+  <h2><i class="bi bi-person-plus-fill me-2"></i>Add Lead</h2>
+  <div class="user-section">
+    {% if user.is_authenticated %}
+    <span class="username-display">
+      <i class="bi bi-person-circle me-1"></i>{{ user.username }}
+    </span>
+    <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm">
+      <i class="bi bi-box-arrow-right me-1"></i>Logout
+    </a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Django Messages -->
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+  <i
+    class="bi bi-{% if message.tags == 'success' %}check-circle-fill{% elif message.tags == 'error' %}exclamation-triangle-fill{% else %}info-circle-fill{% endif %} me-2"></i>
+  {{ message }}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
+
+<!-- Form Card -->
+<div class="container-fluid">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="card card-custom">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-pencil-square me-2"></i>Lead Information
+          </h5>
+        </div>
+        <div class="card-body p-4">
+          <!-- Non-field errors -->
+          {% if form.non_field_errors %}
+          <div class="alert alert-danger" role="alert">
+            {{ form.non_field_errors }}
+          </div>
+          {% endif %}
+
+          <form method="post" novalidate>
+            {% csrf_token %}
+
+            <div class="row">
+              <!-- Left Column -->
+              <div class="col-md-6">
+                <!-- Full Name -->
+                <div class="mb-3">
+                  <label for="{{ form.full_name.id_for_label }}" class="form-label">
+                    <i class="bi bi-person me-1"></i>Full Name <span class="text-danger">*</span>
+                  </label>
+                  <input type="text" class="form-control {% if form.full_name.errors %}is-invalid{% endif %}"
+                    name="{{ form.full_name.name }}" value="{{ form.full_name.value|default:'' }}"
+                    id="{{ form.full_name.id_for_label }}" placeholder="Enter full name" required>
+                  {% if form.full_name.errors %}
+                  <div class="invalid-feedback d-block">
+                    {{ form.full_name.errors }}
+                  </div>
+                  {% endif %}
+                </div>
+
+                <!-- Phone -->
+                <div class="mb-3">
+                  <label for="{{ form.phone.id_for_label }}" class="form-label">
+                    <i class="bi bi-telephone me-1"></i>Phone <span class="text-danger">*</span>
+                  </label>
+                  <input type="text" class="form-control {% if form.phone.errors %}is-invalid{% endif %}"
+                    name="{{ form.phone.name }}" value="{{ form.phone.value|default:'' }}"
+                    id="{{ form.phone.id_for_label }}" placeholder="Enter phone number" required>
+                  {% if form.phone.errors %}
+                  <div class="invalid-feedback d-block">
+                    {{ form.phone.errors }}
+                  </div>
+                  {% endif %}
+                </div>
+
+                <!-- College Name -->
+                <div class="mb-3">
+                  <label for="{{ form.college_name.id_for_label }}" class="form-label">
+                    <i class="bi bi-building me-1"></i>College Name <span class="text-danger">*</span>
+                  </label>
+                  <input type="text" class="form-control {% if form.college_name.errors %}is-invalid{% endif %}"
+                    name="{{ form.college_name.name }}" value="{{ form.college_name.value|default:'' }}"
+                    id="{{ form.college_name.id_for_label }}" placeholder="Enter college name" required>
+                  {% if form.college_name.errors %}
+                  <div class="invalid-feedback d-block">
+                    {{ form.college_name.errors }}
+                  </div>
+                  {% endif %}
+                </div>
+
+                <!-- Status -->
+                <div class="mb-3">
+                  <label for="{{ form.status.id_for_label }}" class="form-label">
+                    <i class="bi bi-toggle-on me-1"></i>Status <span class="text-danger">*</span>
+                  </label>
+                  <select class="form-select {% if form.status.errors %}is-invalid{% endif %}"
+                    name="{{ form.status.name }}" id="{{ form.status.id_for_label }}" required>
+                    <option value="">Select status</option>
+                    <option value="new" {% if form.status.value == 'new' or not form.status.value %}selected{% endif %}>
+                      New</option>
+                    <option value="contacted" {% if form.status.value == 'contacted' %}selected{% endif %}>Contacted
+                    </option>
+                    <option value="converted" {% if form.status.value == 'converted' %}selected{% endif %}>Converted
+                    </option>
+                  </select>
+                  {% if form.status.errors %}
+                  <div class="invalid-feedback d-block">
+                    {{ form.status.errors }}
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <!-- Right Column -->
+              <div class="col-md-6">
+                <!-- Email -->
+                <div class="mb-3">
+                  <label for="{{ form.email.id_for_label }}" class="form-label">
+                    <i class="bi bi-envelope me-1"></i>Email <span class="text-danger">*</span>
+                  </label>
+                  <input type="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}"
+                    name="{{ form.email.name }}" value="{{ form.email.value|default:'' }}"
+                    id="{{ form.email.id_for_label }}" placeholder="Enter email address" required>
+                  {% if form.email.errors %}
+                  <div class="invalid-feedback d-block">
+                    {{ form.email.errors }}
+                  </div>
+                  {% endif %}
+                </div>
+
+                <!-- Interested Course -->
+                <div class="mb-3">
+                  <label for="{{ form.interested_course.id_for_label }}" class="form-label">
+                    <i class="bi bi-book me-1"></i>Interested Course <span class="text-danger">*</span>
+                  </label>
+                  <input type="text" class="form-control {% if form.interested_course.errors %}is-invalid{% endif %}"
+                    name="{{ form.interested_course.name }}" value="{{ form.interested_course.value|default:'' }}"
+                    id="{{ form.interested_course.id_for_label }}" placeholder="Enter course of interest" required>
+                  {% if form.interested_course.errors %}
+                  <div class="invalid-feedback d-block">
+                    {{ form.interested_course.errors }}
+                  </div>
+                  {% endif %}
+                </div>
+
+                <!-- Notes / Remarks -->
+                <div class="mb-3">
+                  <label for="{{ form.notes.id_for_label }}" class="form-label">
+                    <i class="bi bi-sticky me-1"></i>Notes / Remarks
+                  </label>
+                  <textarea class="form-control {% if form.notes.errors %}is-invalid{% endif %}"
+                    name="{{ form.notes.name }}" id="{{ form.notes.id_for_label }}" rows="4"
+                    placeholder="Enter any additional notes or remarks (optional)">{{ form.notes.value|default:'' }}</textarea>
+                  {% if form.notes.errors %}
+                  <div class="invalid-feedback d-block">
+                    {{ form.notes.errors }}
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="card-footer bg-light mt-4 p-3">
+              <div class="d-flex justify-content-end gap-2">
+                <a href="{% url 'lead_list' %}" class="btn btn-secondary">
+                  <i class="bi bi-arrow-left me-1"></i>Back to Leads
+                </a>
+                <button type="submit" class="btn btn-primary">
+                  <i class="bi bi-save me-1"></i>Save Lead
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

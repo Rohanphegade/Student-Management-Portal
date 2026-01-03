@@ -1,17 +1,103 @@
-<h2>Documents for {{ student.full_name }}</h2>
+{% extends "dashboard/base.html" %}
 
-<a href="{% url 'upload_document' student.id %}">Upload New Document</a>
+{% block title %}Student Documents - Student Management Portal{% endblock %}
 
-<ul>
-  {% for doc in documents %}
-    <li>
-  {{ doc.get_document_type_display }} —
-  <a href="{{ doc.file.url }}" target="_blank">View / Download</a>
+{% block navbar %}
+<!-- Top Navbar -->
+<div class="navbar-top">
+  <h2><i class="bi bi-folder me-2"></i>Student Documents</h2>
+  <div class="user-section">
+    {% if user.is_authenticated %}
+    <span class="username-display">
+      <i class="bi bi-person-circle me-1"></i>{{ user.username }}
+    </span>
+    <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm">
+      <i class="bi bi-box-arrow-right me-1"></i>Logout
+    </a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
 
-  <form action="{% url 'delete_document' doc.id %}" method="post" style="display:inline;">
-    {% csrf_token %}
-    <button type="submit">Delete</button>
-  </form>
-</li>
-  {% endfor %}
-</ul>
+{% block content %}
+<div class="container-fluid">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="card card-custom shadow-sm">
+        <!-- Card Header with Title and Upload Button -->
+        <div class="card-header bg-white border-bottom">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold">
+              <i class="bi bi-file-earmark-text me-2"></i>Documents for {{ student.full_name }}
+            </h5>
+            <a href="{% url 'upload_document' student.id %}" class="btn btn-primary btn-sm">
+              <i class="bi bi-upload me-1"></i>Upload New Document
+            </a>
+          </div>
+        </div>
+
+        <div class="card-body p-4">
+          {% if documents %}
+          <!-- Documents Table -->
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Document Type</th>
+                  <th>Uploaded Date</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for doc in documents %}
+                <tr>
+                  <td>
+                    <i class="bi bi-file-earmark me-2 text-primary"></i>
+                    <strong>{{ doc.get_document_type_display }}</strong>
+                  </td>
+                  <td class="text-muted">
+                    {{ doc.uploaded_at|date:"M d, Y" }}
+                  </td>
+                  <td class="text-end">
+                    <a href="{{ doc.file.url }}" target="_blank" class="btn btn-outline-primary btn-sm me-2">
+                      <i class="bi bi-eye me-1"></i>View
+                    </a>
+                    <form action="{% url 'delete_document' doc.id %}" method="post" style="display:inline;">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-outline-danger btn-sm"
+                        onclick="return confirm('Are you sure you want to delete this document?');">
+                        <i class="bi bi-trash me-1"></i>Delete
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <!-- Empty State -->
+          <div class="text-center py-5">
+            <i class="bi bi-folder-x text-muted" style="font-size: 4rem;"></i>
+            <h5 class="mt-3 text-muted">No documents uploaded yet</h5>
+            <p class="text-muted mb-4">Upload documents to keep track of student records</p>
+            <a href="{% url 'upload_document' student.id %}" class="btn btn-primary">
+              <i class="bi bi-upload me-2"></i>Upload First Document
+            </a>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Card Footer with Back Button -->
+        <div class="card-footer bg-light">
+          <div class="d-flex justify-content-start">
+            <a href="{% url 'student_view' student.id %}" class="btn btn-outline-secondary">
+              <i class="bi bi-arrow-left me-1"></i>Back to Student Details
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
