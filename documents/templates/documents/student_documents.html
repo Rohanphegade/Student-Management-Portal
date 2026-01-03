@@ -59,7 +59,8 @@
                     {{ doc.uploaded_at|date:"M d, Y" }}
                   </td>
                   <td class="text-end">
-                    <a href="{{ doc.file.url }}" target="_blank" class="btn btn-outline-primary btn-sm me-2">
+                    <a href="{% url 'view_document' doc.id %}"
+                      class="btn btn-outline-primary btn-sm me-2">
                       <i class="bi bi-eye me-1"></i>View
                     </a>
                     <form action="{% url 'delete_document' doc.id %}" method="post" style="display:inline;">

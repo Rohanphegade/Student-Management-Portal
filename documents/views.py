@@ -4,6 +4,8 @@ from .forms import DocumentForm
 from student.models import Student
 from django.contrib.auth.decorators import login_required, user_passes_test
 from accounts.utils import is_admin_or_manager
+from django.http import FileResponse, Http404
+import os
 
 
 @login_required
@@ -53,3 +55,22 @@ def delete_document(request, doc_id):
     return render(request, 'documents/delete_document.html', {
         'document': document
     })
+
+
+@login_required
+@user_passes_test(is_admin_or_manager)
+def view_document(request, doc_id):
+    document = get_object_or_404(Document, id=doc_id)
+
+    if not document.file:
+        raise Http404("File not found")
+
+    file_path = document.file.path
+
+    if not os.path.exists(file_path):
+        raise Http404("File not found")
+
+    return FileResponse(
+        open(file_path, 'rb'),
+        content_type='application/pdf'
+    )
