@@ -13,3 +13,8 @@ media/
 
 # Environment files
 .env
+
+#
+*.pem
+.pem
+student-portal-key.pem
